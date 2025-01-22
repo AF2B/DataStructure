@@ -7,13 +7,13 @@
                       :opt-un [::children]))
 
 (defprotocol TreeOperations
-  "Protocolo definindo operações fundamentais da árvore"
-  (add-child [this child-value] "Adiciona um novo nó filho com o valor especificado")
-  (remove-child [this index] "Remove o filho no índice especificado")
-  (update-node-value [this new-value] "Atualiza o valor do nó atual")
-  (get-child-at [this index] "Obtém o nó filho no índice especificado")
-  (get-tree-depth [this] "Calcula a profundidade da árvore")
-  (get-tree-size [this] "Calcula o número total de nós na árvore"))
+  "Protocol defining fundamental tree operations"
+  (add-child [this child-value] "Adds a new child node with the specified value")
+  (remove-child [this index] "Removes the child at the specified index")
+  (update-node-value [this new-value] "Updates the value of the current node")
+  (get-child-at [this index] "Gets the child node at the specified index")
+  (get-tree-depth [this] "Calculates the depth of the tree")
+  (get-tree-size [this] "Calculates the total number of nodes in the tree"))
 
 (defrecord TreeNode [value children]
   TreeOperations
@@ -51,7 +51,7 @@
     (inc (reduce + 0 (map get-tree-size (:children this))))))
 
 (defn create-tree
-  "Cria uma nova árvore com o valor especificado"
+  "Creates a new tree with the specified value"
   [value]
   (let [tree (->TreeNode value [])]
     (if (s/valid? ::tree tree)
@@ -61,21 +61,21 @@
                       :spec-error (s/explain-str ::tree tree)})))))
 
 (defn pre-order
-  "Realiza travessia pré-ordem na árvore"
+  "Performs pre-order traversal on the tree"
   [tree]
   (when (s/valid? ::tree tree)
     (cons (:value tree)
           (mapcat pre-order (:children tree)))))
 
 (defn post-order
-  "Realiza travessia pós-ordem na árvore"
+  "Performs post-order traversal on the tree"
   [tree]
   (when (s/valid? ::tree tree)
     (concat (mapcat post-order (:children tree))
             [(:value tree)])))
 
 (defn breadth-first
-  "Realiza travessia em largura na árvore"
+  "Performs breadth-first traversal on the tree"
   [tree]
   (when (s/valid? ::tree tree)
     (loop [queue [tree]
@@ -87,7 +87,7 @@
                  (conj result (:value current))))))))
 
 (defn find-node
-  "Encontra um nó na árvore que satisfaça o predicado"
+  "Finds a node in the tree that satisfies the predicate"
   [tree pred]
   (when (s/valid? ::tree tree)
     (cond
@@ -96,7 +96,7 @@
       :else (some #(find-node % pred) (:children tree)))))
 
 (defn map-tree
-  "Aplica a função f para cada valor de nó na árvore"
+  "Applies the function f to each node value in the tree"
   [f tree]
   (when (s/valid? ::tree tree)
     (->TreeNode (f (:value tree))
@@ -127,7 +127,7 @@
   (get-tree-size nested-tree)   ;; => 6
   
   (map-tree #(* 2 %) nested-tree)
-  ;; => TreeNode com valores duplicados
+  ;; => TreeNode with doubled values
   
   (find-node nested-tree #(= 3 (:value %)))
   ;; => TreeNode{:value 3, :children []}
